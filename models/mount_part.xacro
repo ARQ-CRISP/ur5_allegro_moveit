@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- This is the xacro file, defining the visuals and collisions of
+the solid metal part that connects allegro to ur5 -->
+<robot>
+
+<link name="mount_base">
+  <visual>
+    <geometry>
+      <cylinder length="0.005" radius="0.075"/>
+    </geometry>
+    <material name="yellowish">
+      <color rgba=".8 .8 .6 1"/>
+    </material>
+  </visual>
+  <collision>
+    <geometry>
+      <cylinder length="0.005" radius="0.075"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="mount_body">
+  <visual>
+    <geometry>
+      <cylinder length="0.075" radius="0.01"/>
+    </geometry>
+    <material name="yellowish">
+      <color rgba=".8 .8 .6 1"/>
+    </material>
+  </visual>
+  <collision>
+    <geometry>
+      <cylinder length="0.075" radius="0.01"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="mount_mid" type="fixed">
+  <parent link="mount_base" />
+  <child link = "mount_body" />
+  <origin xyz="0.0 0.0 0.04" rpy="0.0 0.0 0.0" />
+</joint>
+
+</robot>

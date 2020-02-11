@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ur5_allegro_moveit</name>
+  <version>0.3.0</version>
+  <description>
+     An automatically generated package with all the configuration and launch files for using the ur5_allegro with the MoveIt! Motion Planning Framework
+  </description>
+  <author email="g.solak@qmul.ac.uk">Gokhan Solak</author>
+  <maintainer email="g.solak@qmul.ac.uk">Gokhan Solak</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://moveit.ros.org/</url>
+  <url type="bugtracker">https://github.com/ros-planning/moveit/issues</url>
+  <url type="repository">https://github.com/ros-planning/moveit</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+<exec_depend>moveit_core</exec_depend>
+  <exec_depend>moveit_visual_tools</exec_depend>
+  <exec_depend>moveit_ros_planning_interface</exec_depend>
+  <exec_depend>moveit_ros_planning</exec_depend>
+
+  <exec_depend>moveit_ros_move_group</exec_depend>
+  <exec_depend>moveit_fake_controller_manager</exec_depend>
+ <exec_depend>moveit_simple_controller_manager</exec_depend>
+  <exec_depend>moveit_kinematics</exec_depend>
+  <exec_depend>moveit_planners_ompl</exec_depend>
+  <exec_depend>moveit_ros_visualization</exec_depend>
+  <exec_depend>moveit_setup_assistant</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+
+ <exec_depend>geometry_msgs</exec_depend>
+
+  <exec_depend>xacro</exec_depend>
+  <!-- This package is referenced in the warehouse launch files, but does not build out of the box at the moment. Commented the dependency until this works. -->
+  <!-- <exec_depend>warehouse_ros_mongo</exec_depend> -->
+  <build_depend>ur_description</build_depend>
+ <build_depend>moveit_core</build_depend>
+  <build_depend>moveit_visual_tools</build_depend>
+  <build_depend>moveit_ros_planning_interface</build_depend>
+  <build_depend>moveit_ros_planning</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+
+  <exec_depend>ur_description</exec_depend>
+
+  <!-- packages refered by launch files -->
+  <exec_depend>ur_modern_driver</exec_depend>
+  <exec_depend>allegro_hand_kdl</exec_depend>
+
+<buildtool_depend>catkin</buildtool_depend>
+
+</package>

@@ -1,0 +1,33 @@
+controller_list:
+  - name: fake_allegro_finger0_controller
+    joints:
+      - joint_0
+      - joint_1
+      - joint_2
+      - joint_3
+  - name: fake_allegro_finger1_controller
+    joints:
+      - joint_4
+      - joint_5
+      - joint_6
+      - joint_7
+  - name: fake_allegro_finger2_controller
+    joints:
+      - joint_8
+      - joint_9
+      - joint_10
+      - joint_11
+  - name: fake_allegro_finger3_controller
+    joints:
+      - joint_12
+      - joint_13
+      - joint_14
+      - joint_15
+  - name: fake_ur5_arm_controller
+    joints:
+      - shoulder_pan_joint
+      - shoulder_lift_joint
+      - elbow_joint
+      - wrist_1_joint
+      - wrist_2_joint
+      - wrist_3_joint

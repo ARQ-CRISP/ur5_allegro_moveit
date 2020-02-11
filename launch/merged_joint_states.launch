@@ -1,0 +1,17 @@
+<launch>
+
+  <arg name="NUM" default="0"/>
+  <arg name="HAND" default="right"/>
+
+  <node name="merged_joint_states_$(arg NUM)"
+        type="merged_joint_states"
+        pkg="ur5_allegro_moveit"
+        output="screen">
+
+    <remap from="ur5_js" to="ur5/joint_states"/>
+    <remap from="allegro_js" to="allegroHand_$(arg NUM)/joint_states"/>
+
+    <param name="overwrite" value="false"/>
+  </node>
+
+</launch>

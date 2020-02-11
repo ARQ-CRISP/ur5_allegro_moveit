@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--- <robot xmlns:xacro="http://ros.org/wiki/xacro" name="ur5" >  -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="ur5_allegro" >
+
+  <xacro:arg name="optoforce" default="true"/>
+
+  <!-- allegro -->
+  <xacro:if value="$(arg optoforce)">
+    <xacro:include filename="$(find ur5_allegro_moveit)/models/allegro_optoforce_right.xacro" />
+  </xacro:if>
+  <xacro:unless value="$(arg optoforce)">
+    <xacro:include filename="$(find allegro_hand_description)/allegro_hand_description_right.xacro" />
+  </xacro:unless>
+  <!-- ur5 -->
+  <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro" />
+
+  <!-- arm -->
+  <xacro:ur5_robot prefix="" joint_limited="false"/>
+
+  <!-- mount part connecting allegro to ur5-->
+  <xacro:include filename="$(find ur5_allegro_moveit)/models/mount_part.xacro" />
+
+
+  <link name="world" />
+
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link = "base_link" />
+    <origin xyz="0.145 0.0 1.656" rpy="1.5708 0.0 1.5708" />
+  </joint>
+
+  <joint name="tool_mount" type="fixed">
+    <parent link="tool0" />
+    <child link = "mount_base" />
+    <origin xyz="0.0025 0.0 0.0" rpy="0.0 0.0 0.0" />
+  </joint>
+
+  <joint name="mount_allegro" type="fixed">
+    <parent link="mount_body" />
+    <child link = "hand_root" />
+    <origin xyz="0.0 0.0 0.0375" rpy="0.0 0.0 -0.79" />
+  </joint>
+
+</robot>

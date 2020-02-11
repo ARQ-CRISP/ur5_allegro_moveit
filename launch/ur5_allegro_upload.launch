@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="limited" default="false" doc="If true, limits joint range [-PI, PI] on all joints." />
+
+  <!-- whether or not to load allegro model with optoforce sensors -->
+  <arg name="optoforce" default="true"/>
+
+  <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find ur5_allegro_moveit)/models/ur5_allegro.xacro' optoforce:=$(arg optoforce)" />
+  <!-- TODO: limited urdf -->
+</launch>
