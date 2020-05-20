@@ -8,6 +8,8 @@
   <!-- Allow user to specify database location -->
   <arg name="db_path" default="$(find ur5_allegro_moveit)/default_warehouse_mongo_db" />
 
+  <arg name="rviz" default="true"/>
+
   <!-- By default, we are not in debug mode -->
   <arg name="debug" default="false" />
 
@@ -50,6 +52,7 @@
   <!-- We do not have a robot connected, so publish fake joint states -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="use_gui" value="$(arg use_gui)"/>
+    <param name="rate" value="200" />
     <rosparam param="source_list">[merged_states]</rosparam>
     <remap from="zeros" to="ur5_allegro_moveit/zeros"/>
   </node>
@@ -66,7 +69,8 @@
   </include>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
-  <include file="$(find ur5_allegro_moveit)/launch/moveit_rviz.launch">
+  <include if="$(arg rviz)"
+    file="$(find ur5_allegro_moveit)/launch/moveit_rviz.launch">
     <arg name="config" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
