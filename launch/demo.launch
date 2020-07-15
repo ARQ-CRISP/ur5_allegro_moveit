@@ -52,13 +52,20 @@
   <!-- We do not have a robot connected, so publish fake joint states -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="use_gui" value="$(arg use_gui)"/>
-    <param name="rate" value="200" />
+    <param name="rate" value="100" />
     <rosparam param="source_list">[merged_states]</rosparam>
     <remap from="zeros" to="ur5_allegro_moveit/zeros"/>
   </node>
 
   <!-- Given the published joint states, publish tf for the robot links -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+  <node name="robot_state_publisher"
+    pkg="robot_state_publisher"
+    type="robot_state_publisher"
+    respawn="true"
+    output="screen">
+
+    <param name="publish_frequency" value="100" />
+  </node>
 
   <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find ur5_allegro_moveit)/launch/move_group.launch">
