@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--- <robot xmlns:xacro="http://ros.org/wiki/xacro" name="ur5" >  -->
-<robot xmlns:xacro="http://ros.org/wiki/xacro" name="ur5_allegro" >
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="ur5_allegro" >
 
   <xacro:arg name="optoforce" default="true"/>
 
@@ -15,7 +15,12 @@
   <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro" />
 
   <!-- arm -->
-  <xacro:ur5_robot prefix="" joint_limited="false"/>
+  <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
+  <xacro:arg name="kinematics_config" default="$(find ur_description)/config/ur5_default.yaml"/>
+  <xacro:ur5_robot prefix="" joint_limited="false"
+    transmission_hw_interface="$(arg transmission_hw_interface)"
+    kinematics_file="${load_yaml('$(arg kinematics_config)')}"
+    />
 
   <!-- mount part connecting allegro to ur5-->
   <xacro:include filename="$(find ur5_allegro_moveit)/models/mount_part.xacro" />
