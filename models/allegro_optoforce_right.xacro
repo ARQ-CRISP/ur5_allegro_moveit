@@ -32,7 +32,7 @@
     <xacro:property name="link0_t_x" value="0.0358"/>
     <xacro:property name="link0_t_y" value="0.0340"/>
     <xacro:property name="link0_t_z" value="0.0455"/>
-    <xacro:property name="link1_t_z" value="0.0177"/>
+    <xacro:property name="link1_t_z" value="0.0166"/>
     <xacro:property name="link2_t_z" value="0.0514"/>
     <xacro:property name="link3_t_z" value="0.0313"/>
 
@@ -176,7 +176,7 @@
                    upper="${limit_1_t_up-joint_safety_margin}"/>
             <parent link="link_${finger_num*4+0}"/>
             <child link="link_${finger_num*4+1}"/>
-            <origin xyz="-0.027 0.005 0.0399"/>
+            <origin xyz="-0.027 0.005 0.0388"/>
             <dynamics damping="3" friction="5"/>
         </joint>
 
