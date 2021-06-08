@@ -19,6 +19,7 @@
   <xacro:arg name="kinematics_config" default="$(find ur_description)/config/ur5_default.yaml"/>
   <xacro:ur5_robot prefix="" joint_limited="false"
     transmission_hw_interface="$(arg transmission_hw_interface)"
+    kinematics_file="${load_yaml('$(arg kinematics_config)')}"
     />
 
   <!-- mount part connecting allegro to ur5-->

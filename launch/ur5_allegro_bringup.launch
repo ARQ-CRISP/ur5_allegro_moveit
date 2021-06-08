@@ -8,61 +8,44 @@
 <!-- TODO: limited urdf -->
 <!-- TODO: Multi arms/hands case -->
 <launch>
+  <!-- NOTE: I copied ur_robot_driver/launch/ur_control.launch contents -->
+  <!-- copying was necessary in order to remap the driver node topics, such as joint_states -->
 
-  <!-- robot_ip: IP-address of the robot's socket-messaging server -->
-  <arg name="robot_ip"/>
   <arg name="limited" default="false"/>
-  <arg name="min_payload"  default="0.0"/>
-  <arg name="max_payload"  default="5.0"/>
-  <arg name="prefix" default="" />
-  <arg name="use_ros_control" default="false"/>
-  <arg name="use_lowbandwidth_trajectory_follower" default="false"/>
-  <arg name="time_interval" default="0.008"/>
-  <arg name="servoj_time" default="0.008" />
-  <arg name="servoj_time_waiting" default="0.001" />
-  <arg name="max_waiting_time" default="2.0" />
-  <arg name="servoj_gain" default="100." />
-  <arg name="servoj_lookahead_time" default="1." />
-  <arg name="max_joint_difference" default="0.01" />
-  <arg name="base_frame" default="$(arg prefix)base" />
-  <arg name="tool_frame" default="$(arg prefix)tool0_controller" />
-  <arg name="shutdown_on_disconnect" default="true" />
+  <!-- GDB functionality -->
+  <arg name="debug" default="false" doc="If set to true, will start the driver inside gdb" />
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
-  <!-- require_activation defines when the service /ur_driver/robot_enable needs to be called. -->
-  <arg name="require_activation" default="Never" /> <!-- Never, Always, OnStartup -->
+  <arg name="controller_config_file" default="$(find ur_robot_driver)/config/ur5_controllers.yaml" doc="Config file used for defining the ROS-Control controllers."/>
+  <arg name="robot_ip" doc="IP address by which the robot can be reached."/>
+  <arg name="reverse_port" default="50001" doc="Port that will be opened by the driver to allow direct communication between the driver and the robot controller."/>
+  <arg name="script_sender_port" default="50002" doc="The driver will offer an interface to receive the program's URScript on this port. If the robot cannot connect to this port, `External Control` will stop immediately."/>
+  <!-- NOTE: if you are missing the calibration file, create one using the commmand given in ur_robot_driver/readme file -->
+  <arg name="kinematics_config" doc="Kinematics config file used for calibration correction. This will be used to verify the robot's calibration is matching the robot_description. Pass the same config file that is passed to the robot_description."
+    default="$(env HOME)/my_robot_calibration.yaml"/>
 
-  <!-- The max_velocity parameter is only used for debugging in the ur_driver. It's not related to actual velocity limits -->
-  <arg name="max_velocity" default="10.0"/> <!-- [rad/s] -->
+  <!-- mysterious params from ur_robot_driver package -->
+  <arg name="use_tool_communication" default="false" doc="On e-Series robots tool communication can be enabled with this argument"/>
+  <arg name="tf_prefix" default="" doc="tf_prefix used for the robot."/>
+  <arg name="controllers" default="joint_state_controller scaled_pos_joint_traj_controller speed_scaling_state_controller force_torque_sensor_controller"/>
+  <arg name="stopped_controllers" default="joint_group_vel_controller"/>
+  <arg name="urscript_file" default="$(find ur_robot_driver)/resources/ros_control.urscript" doc="Path to URScript that will be sent to the robot and that forms the main control program."/>
+  <arg name="headless_mode" default="false" doc="Automatically send URScript to robot to execute. On e-Series this does require the robot to be in 'remote-control' mode. With this, the URCap is not needed on the robot."/>
+  <arg name="rtde_output_recipe_file" default="$(find ur_robot_driver)/resources/rtde_output_recipe.txt" doc="Recipe file used for the RTDE-outputs. Only change this if you know what you're doing."/>
+  <arg name="rtde_input_recipe_file" default="$(find ur_robot_driver)/resources/rtde_input_recipe.txt" doc="Recipe file used for the RTDE-inputs. Only change this if you know what you're doing."/>
+  <arg name="tool_voltage" default="0" doc="Tool voltage set at the beginning of the UR program. Only used, when `use_tool_communication` is set to true."/>
+  <arg name="tool_parity" default="0" doc="Parity configuration used for tool communication. Only used, when `use_tool_communication` is set to true."/>
+  <arg name="tool_baud_rate" default="115200" doc="Baud rate used for tool communication. Only used, when `use_tool_communication` is set to true."/>
+  <arg name="tool_stop_bits" default="1" doc="Number of stop bits used for tool communication. Only used, when `use_tool_communication` is set to true."/>
+  <arg name="tool_rx_idle_chars" default="1.5" doc="Number of idle chars in RX channel used for tool communication. Only used, when `use_tool_communication` is set to true."/>
+  <arg name="tool_tx_idle_chars" default="3.5" doc="Number of idle chars in TX channel used for tool communication. Only used, when `use_tool_communication` is set to true."/>
+  <arg name="tool_device_name" default="/tmp/ttyUR" doc="Local device name used for tool communication. Only used, when `use_tool_communication` is set to true."/>
+  <arg name="tool_tcp_port" default="54321" doc="Port on which the robot controller publishes the tool comm interface. Only used, when `use_tool_communication` is set to true."/>
+
 
   <!-- whether or not to load allegro model with optoforce sensors -->
   <arg name="optoforce" default="true"/>
-
-  <!-- ur driver -->
-  <node name="ur_driver" pkg="ur_modern_driver" type="ur_driver" output="screen">
-  <!-- copy the specified IP address to be consistant with ROS-Industrial spec. -->
-    <param name="prefix" type="str" value="$(arg prefix)" />
-    <param name="robot_ip_address" type="str" value="$(arg robot_ip)" />
-    <param name="use_ros_control" type="bool" value="$(arg use_ros_control)"/>
-    <param name="use_lowbandwidth_trajectory_follower" type="bool" value="$(arg use_lowbandwidth_trajectory_follower)"/>
-    <param name="min_payload" type="double" value="$(arg min_payload)" />
-    <param name="max_payload" type="double" value="$(arg max_payload)" />
-    <param name="max_velocity" type="double" value="$(arg max_velocity)" />
-    <param name="time_interval" type="double" value="$(arg time_interval)" />
-    <param name="servoj_time" type="double" value="$(arg servoj_time)" />
-    <param name="servoj_time_waiting" type="double" value="$(arg servoj_time_waiting)" />
-    <param name="max_waiting_time" type="double" value="$(arg max_waiting_time)" />
-    <param name="servoj_gain" type="double" value="$(arg servoj_gain)" />
-    <param name="servoj_lookahead_time" type="double" value="$(arg servoj_lookahead_time)" />
-    <param name="max_joint_difference" type="double" value="$(arg max_joint_difference)" />
-    <param name="base_frame" type="str" value="$(arg base_frame)"/>
-    <param name="tool_frame" type="str" value="$(arg tool_frame)"/>
-    <param name="require_activation" type="str" value="$(arg require_activation)" />
-    <param name="shutdown_on_disconnect" type="bool" value="$(arg shutdown_on_disconnect)"/>
-
-    <!-- remap topics intersecting with that of Allegro -->
-    <remap from="joint_states" to="ur5/joint_states"/>
-    <remap from="tf" to="ur5/tf" />
-  </node>
 
   <!-- allegro driver -->
   <include file="$(find allegro_hand_kdl)/launch/allegro_torque.launch" >
@@ -75,13 +58,69 @@
   <include file="$(find ur5_allegro_moveit)/launch/ur5_allegro_upload.launch">
     <arg name="limited" value="$(arg limited)"/>
     <arg name="optoforce" value="$(arg optoforce)"/>
+    <arg name="kinematics_config" value="$(arg kinematics_config)"/>
   </include>
+
+  <!-- Load hardware interface -->
+  <node name="ur_hardware_interface" pkg="ur_robot_driver" type="ur_robot_driver_node" output="screen" launch-prefix="$(arg launch_prefix)" required="true">
+    <param name="robot_ip" type="str" value="$(arg robot_ip)"/>
+    <param name="reverse_port" type="int" value="$(arg reverse_port)"/>
+    <param name="script_sender_port" type="int" value="$(arg script_sender_port)"/>
+    <rosparam command="load" file="$(arg kinematics_config)" />
+    <param name="script_file" value="$(arg urscript_file)"/>
+    <param name="output_recipe_file" value="$(arg rtde_output_recipe_file)"/>
+    <param name="input_recipe_file" value="$(arg rtde_input_recipe_file)"/>
+    <param name="headless_mode" value="$(arg headless_mode)"/>
+    <param name="tf_prefix" value="$(arg tf_prefix)"/>
+
+    <param name="use_tool_communication" value="$(arg use_tool_communication)"/>
+    <param name="tool_voltage" value="$(arg tool_voltage)"/>
+    <param name="tool_parity" value="$(arg tool_parity)"/>
+    <param name="tool_baud_rate" value="$(arg tool_baud_rate)"/>
+    <param name="tool_stop_bits" value="$(arg tool_stop_bits)"/>
+    <param name="tool_rx_idle_chars" value="$(arg tool_rx_idle_chars)"/>
+    <param name="tool_tx_idle_chars" value="$(arg tool_tx_idle_chars)"/>
+
+    <!-- remap topics intersecting with that of Allegro -->
+    <remap from="joint_states" to="ur5/joint_states"/>
+    <remap from="tf" to="ur5/tf" />
+  </node>
 
   <!-- publish merged joint states, used for TF -->
   <include file="$(find ur5_allegro_moveit)/launch/merged_joint_states.launch" />
 
   <!-- publish tf -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- ================================================================== -->
+  <!-- NOTE: below are mysterious nodes copied from ur_robot_driver -->
+  <!-- ================================================================== -->
+
+  <!-- Load controller settings -->
+  <rosparam file="$(arg controller_config_file)" command="load"/>
+
+  <!-- spawn controller manager -->
+  <node name="ros_control_controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" args="$(arg controllers)" />
+
+  <!-- load other controller -->
+  <node name="ros_control_stopped_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" args="--stopped $(arg stopped_controllers)" />
+
+
+  <node name="controller_stopper" pkg="controller_stopper" type="node" respawn="false" output="screen">
+    <remap from="robot_running" to="ur_hardware_interface/robot_program_running"/>
+    <rosparam param="consistent_controllers">
+       - "joint_state_controller"
+       - "speed_scaling_state_controller"
+       - "force_torque_sensor_controller"
+       - "robot_status_controller"
+    </rosparam>
+  </node>
+
+  <!-- Make sure to start this in the namespace of the hardware interface -->
+  <node ns="ur_hardware_interface" name="ur_robot_state_helper" pkg="ur_robot_driver" type="robot_state_helper" respawn="false" output="screen">
+  </node>
 
 
 </launch>

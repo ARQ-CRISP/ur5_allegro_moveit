@@ -1,0 +1,34 @@
+<!-- This launch file is designed to be used with a rosbag. -->
+<!-- It is called puppet because it will merely follow rosbag state. -->
+<!-- It does not start any control nodes or anything. -->
+<!-- "rosbag play" with "-clock" parameter, so the bag time is published. -->
+<launch>
+  <!-- allegro params -->
+  <arg name="NUM" default="0"/>
+  <arg name="HAND" default="right"/>
+
+  <arg name="rviz" default="true"/>
+
+  <!-- whether or not to load allegro model with optoforce sensors -->
+  <arg name="optoforce" default="true"/>
+
+  <arg name="config_rviz" default="$(find ur5_allegro_moveit)/launch/puppet.rviz"/>
+
+  <!-- so that the rosbag time is used -->
+  <param name="/use_sim_time" value="true"/>
+
+  <!-- load the simulation zero pose of the robot -->
+  <rosparam command="load" file="$(find ur5_allegro_moveit)/config/sim_zeros.yaml" ns="ur5_allegro_moveit"/>
+
+  <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
+  <include file="$(find ur5_allegro_moveit)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="true"/>
+    <arg name="optoforce" value="$(arg optoforce)"/>
+  </include>
+
+  <node name="$(anon rviz)" pkg="rviz" type="rviz" respawn="false"
+  args="-d $(arg config_rviz)" output="screen">
+    <rosparam command="load" file="$(find ur5_allegro_moveit)/config/kinematics.yaml"/>
+  </node>
+
+</launch>

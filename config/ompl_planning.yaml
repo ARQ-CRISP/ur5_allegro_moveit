@@ -121,7 +121,7 @@ planner_configs:
     dense_delta_fraction: 0.001  # delta fraction for interface detection. default: 0.001
     max_failures: 5000  # maximum consecutive failure limit. default: 5000
 allegro_finger0:
-  default_planner_config: RRT
+  default_planner_config: BiTRRT
   planner_configs:
     - SBL
     - EST
@@ -147,7 +147,7 @@ allegro_finger0:
     - SPARS
     - SPARStwo
 allegro_finger1:
-  default_planner_config: RRT
+  default_planner_config: BiTRRT
   planner_configs:
     - SBL
     - EST
@@ -173,7 +173,7 @@ allegro_finger1:
     - SPARS
     - SPARStwo
 allegro_finger2:
-  default_planner_config: RRT
+  default_planner_config: BiTRRT
   planner_configs:
     - SBL
     - EST
@@ -199,7 +199,7 @@ allegro_finger2:
     - SPARS
     - SPARStwo
 allegro_finger3:
-  default_planner_config: RRT
+  default_planner_config: BiTRRT
   planner_configs:
     - SBL
     - EST
@@ -225,7 +225,7 @@ allegro_finger3:
     - SPARS
     - SPARStwo
 ur5_arm:
-  default_planner_config: RRT
+  default_planner_config: BiTRRT
   planner_configs:
     - SBL
     - EST

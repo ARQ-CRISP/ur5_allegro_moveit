@@ -9,6 +9,7 @@
 
   <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find ur5_allegro_moveit)/models/ur5_allegro.xacro'
     optoforce:=$(arg optoforce)
-    transmission_hw_interface:=$(arg transmission_hw_interface)" />
+    transmission_hw_interface:=$(arg transmission_hw_interface)
+    kinematics_config:=$(arg kinematics_config)" />
   <!-- TODO: limited urdf -->
 </launch>

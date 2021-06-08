@@ -46,7 +46,7 @@
   <exec_depend>ur_description</exec_depend>
 
   <!-- packages refered by launch files -->
-  <exec_depend>ur_modern_driver</exec_depend>
+  <exec_depend>ur_robot_driver</exec_depend>
   <exec_depend>allegro_hand_kdl</exec_depend>
 
 <buildtool_depend>catkin</buildtool_depend>
