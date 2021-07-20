@@ -12,15 +12,7 @@
     <xacro:include filename="$(find allegro_hand_description)/allegro_hand_description_right.xacro" />
   </xacro:unless>
   <!-- ur5 -->
-  <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro" />
-
-  <!-- arm -->
-  <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
-  <xacro:arg name="kinematics_config" default="$(find ur_description)/config/ur5_default.yaml"/>
-  <xacro:ur5_robot prefix="" joint_limited="false"
-    transmission_hw_interface="$(arg transmission_hw_interface)"
-    kinematics_file="${load_yaml('$(arg kinematics_config)')}"
-    />
+  <xacro:include filename="$(find ur_description)/urdf/ur5.xacro" />
 
   <!-- mount part connecting allegro to ur5-->
   <xacro:include filename="$(find ur5_allegro_moveit)/models/mount_part.xacro" />

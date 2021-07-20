@@ -1,9 +1,7 @@
 <launch>
-  <!-- TODO: limited urdf -->
   <!-- By default we do not overwrite the URDF. Change the following to true to change the default behavior -->
   <arg name="load_robot_description" default="false"/>
-  <arg name="limited" default="false"/>
-  
+
   <!-- whether or not to load allegro model with optoforce sensors -->
   <arg name="optoforce" default="true"/>
 
@@ -13,7 +11,7 @@
   <!-- Load universal robot description format (URDF) -->
   <param if="$(arg load_robot_description)"
     name="$(arg robot_description)"
-    command="xacro --inorder '$(find ur5_allegro_moveit)/models/ur5_allegro.xacro' optoforce:=$(arg optoforce)"/>
+    command="xacro '$(find ur5_allegro_moveit)/models/ur5_allegro.xacro' optoforce:=$(arg optoforce)"/>
 
   <!-- The semantic description that corresponds to the URDF -->
   <param name="$(arg robot_description)_semantic" textfile="$(find ur5_allegro_moveit)/config/ur5_allegro.srdf" />
