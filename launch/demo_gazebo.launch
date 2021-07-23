@@ -1,20 +1,15 @@
 <launch>
-  <!-- allegro params -->
-  <arg name="NUM" default="0"/>
-  <arg name="HAND" default="right"/>
 
   <!-- By default, we do not start a database (it can be large) -->
   <arg name="db" default="false" />
   <!-- Allow user to specify database location -->
   <arg name="db_path" default="$(find ur5_allegro_moveit)/default_warehouse_mongo_db" />
 
-  <arg name="rviz" default="true"/>
-
   <!-- By default, we are not in debug mode -->
   <arg name="debug" default="false" />
 
-  <!-- whether or not to load allegro model with optoforce sensors -->
-  <arg name="optoforce" default="true"/>
+  <!-- By default, we won't load or override the robot_description -->
+  <arg name="load_robot_description" default="false"/>
 
   <!--
   By default, hide joint_state_publisher's GUI
@@ -26,58 +21,46 @@
   -->
   <arg name="use_gui" default="false" />
 
-  <!-- load the simulation zero pose of the robot -->
-  <rosparam command="load" file="$(find ur5_allegro_moveit)/config/sim_zeros.yaml" ns="ur5_allegro_moveit"/>
+  <!-- Gazebo specific options -->
+  <arg name="gazebo_gui" default="true"/>
+  <arg name="paused" default="false"/>
+  <!-- By default, use the urdf location provided from the package -->
+  <arg name="urdf_path" default="$(find ur5_allegro_moveit)/ur5_allegro.xacro"/>
 
-  <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
-  <include file="$(find ur5_allegro_moveit)/launch/planning_context.launch">
-    <arg name="load_robot_description" value="true"/>
-    <arg name="optoforce" value="$(arg optoforce)"/>
+  <!-- launch the gazebo simulator and spawn the robot -->
+  <include file="$(find ur5_allegro_moveit)/launch/gazebo.launch" >
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="gazebo_gui" value="$(arg gazebo_gui)"/>
+    <arg name="urdf_path" value="$(arg urdf_path)"/>
   </include>
 
-  <!-- merge the joint states from allegro with moveit fake control -->
-  <node name="merged_joint_states_$(arg NUM)"
-        type="merged_joint_states"
-        pkg="ur5_allegro_moveit"
-        output="screen">
-
-    <remap from="ur5_js" to="move_group/fake_controller_joint_states"/>
-    <remap from="allegro_js" to="allegroHand_$(arg NUM)/joint_states"/>
-
-    <remap from="joint_states" to="merged_states"/>
-
-    <param name="overwrite" value="false"/>
-  </node>
+  <!-- If needed, broadcast static tf for robot root -->
+  
 
   <!-- We do not have a robot connected, so publish fake joint states -->
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="use_gui" value="$(arg use_gui)"/>
-    <param name="rate" value="100" />
-    <rosparam param="source_list">[merged_states]</rosparam>
-    <remap from="zeros" to="ur5_allegro_moveit/zeros"/>
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" unless="$(arg use_gui)">
+    <rosparam param="source_list">[move_group/fake_controller_joint_states]</rosparam>
+    <rosparam param="source_list">[/joint_states]</rosparam>
+  </node>
+  <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" if="$(arg use_gui)">
+    <rosparam param="source_list">[move_group/fake_controller_joint_states]</rosparam>
+    <rosparam param="source_list">[/joint_states]</rosparam>
   </node>
 
   <!-- Given the published joint states, publish tf for the robot links -->
-  <node name="robot_state_publisher"
-    pkg="robot_state_publisher"
-    type="robot_state_publisher"
-    respawn="true"
-    output="screen">
-
-    <param name="publish_frequency" value="100" />
-  </node>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
 
   <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find ur5_allegro_moveit)/launch/move_group.launch">
     <arg name="allow_trajectory_execution" value="true"/>
-    <arg name="fake_execution" value="true"/>
+    <arg name="fake_execution" value="false"/>
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
+    <arg name="load_robot_description" value="$(arg load_robot_description)"/>
   </include>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
-  <include if="$(arg rviz)"
-    file="$(find ur5_allegro_moveit)/launch/moveit_rviz.launch">
+  <include file="$(find ur5_allegro_moveit)/launch/moveit_rviz.launch">
     <arg name="rviz_config" value="$(find ur5_allegro_moveit)/launch/moveit.rviz"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
